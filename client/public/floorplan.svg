@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" width="900" height="620">
+  <defs>
+    <style>
+      .room-fill { fill: #f5f0e8; }
+      .room-fill-accent { fill: #ede8dc; }
+      .room-fill-wet { fill: #e8edf5; }
+      .room-fill-balcony { fill: #eaf5ea; }
+      .wall { fill: #2c2c2c; }
+      .room-label { font-family: "Georgia", serif; font-size: 11px; fill: #3a3020; text-anchor: middle; }
+      .room-area { font-family: "Georgia", serif; font-size: 10px; fill: #8a7a60; text-anchor: middle; font-style: italic; }
+      .title { font-family: "Georgia", serif; font-size: 16px; fill: #2c2c2c; text-anchor: middle; font-weight: bold; }
+      .subtitle { font-family: "Georgia", serif; font-size: 11px; fill: #8a7a60; text-anchor: middle; }
+      .compass { font-family: "Georgia", serif; font-size: 12px; fill: #3a3020; text-anchor: middle; font-weight: bold; }
+      .door-arc { fill: none; stroke: #2c2c2c; stroke-width: 1; }
+      .window { fill: #b8d4e8; stroke: #2c2c2c; stroke-width: 1; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="620" fill="#faf8f4"/>
+  
+  <!-- Title area -->
+  <text x="450" y="35" class="title">Планировка квартиры</text>
+  <text x="450" y="55" class="subtitle">ЖК «Дипломат» · Евро-3к · 111,5 м² · 6 этаж</text>
+  
+  <!-- === OUTER WALLS === -->
+  <!-- Main apartment outline: x=60, y=80, w=780, h=480 -->
+  
+  <!-- Outer wall top -->
+  <rect x="60" y="80" width="780" height="12" class="wall"/>
+  <!-- Outer wall bottom -->
+  <rect x="60" y="548" width="780" height="12" class="wall"/>
+  <!-- Outer wall left -->
+  <rect x="60" y="80" width="12" height="480" class="wall"/>
+  <!-- Outer wall right -->
+  <rect x="828" y="80" width="12" height="480" class="wall"/>
+  
+  <!-- === INTERIOR WALLS === -->
+  
+  <!-- Vertical wall: divides left (living) from right (bedrooms) at x=460 -->
+  <rect x="458" y="80" width="10" height="310" class="wall"/>
+  
+  <!-- Vertical wall: divides right side top/bottom at x=640 -->
+  <rect x="638" y="80" width="10" height="220" class="wall"/>
+  
+  <!-- Horizontal wall: divides living area from hallway at y=390 -->
+  <rect x="60" y="388" width="408" height="10" class="wall"/>
+  
+  <!-- Horizontal wall: divides bedrooms from bathrooms at y=300 -->
+  <rect x="458" y="298" width="380" height="10" class="wall"/>
+  
+  <!-- Vertical wall: hallway/wardrobe divider at x=240 -->
+  <rect x="238" y="388" width="10" height="170" class="wall"/>
+  
+  <!-- Vertical wall: bathroom divider at x=640 -->
+  <rect x="638" y="298" width="10" height="260" class="wall"/>
+  
+  <!-- Horizontal wall: second bathroom divider at y=430 -->
+  <rect x="638" y="428" width="200" height="10" class="wall"/>
+  
+  <!-- Small wall segment for wardrobe -->
+  <rect x="458" y="388" width="10" height="170" class="wall"/>
+  
+  <!-- Horizontal wall: wardrobe top at y=388 -->
+  <rect x="458" y="388" width="190" height="10" class="wall"/>
+  
+  <!-- === ROOMS === -->
+  
+  <!-- 1. Кухня-Гостиная (большая, слева вверху) -->
+  <rect x="72" y="92" width="376" height="286" class="room-fill"/>
+  <text x="260" y="218" class="room-label">Кухня-гостиная</text>
+  <text x="260" y="234" class="room-area">~40 м²</text>
+  
+  <!-- 2. Спальня 1 (правый верх, широкая) -->
+  <rect x="470" y="92" width="158" height="196" class="room-fill-accent"/>
+  <text x="549" y="183" class="room-label">Спальня 1</text>
+  <text x="549" y="198" class="room-area">~18 м²</text>
+  
+  <!-- 3. Спальня 2 (правый верх, узкая) -->
+  <rect x="648" y="92" width="170" height="196" class="room-fill-accent"/>
+  <text x="733" y="183" class="room-label">Спальня 2</text>
+  <text x="733" y="198" class="room-area">~14 м²</text>
+  
+  <!-- 4. Ванная 1 (правый средний, большая) -->
+  <rect x="470" y="308" width="158" height="250" class="room-fill-wet"/>
+  <text x="549" y="426" class="room-label">Ванная</text>
+  <text x="549" y="441" class="room-area">~7 м²</text>
+  
+  <!-- 5. Ванная 2 / санузел (правый низ) -->
+  <rect x="648" y="308" width="170" height="110" class="room-fill-wet"/>
+  <text x="733" y="356" class="room-label">Санузел</text>
+  <text x="733" y="371" class="room-area">~5 м²</text>
+  
+  <!-- 6. Прихожая (нижний левый) -->
+  <rect x="72" y="398" width="156" height="150" class="room-fill"/>
+  <text x="150" y="471" class="room-label">Прихожая</text>
+  <text x="150" y="486" class="room-area">~8 м²</text>
+  
+  <!-- 7. Гардероб (нижний средний) -->
+  <rect x="248" y="398" width="200" height="150" class="room-fill-accent"/>
+  <text x="348" y="471" class="room-label">Гардероб</text>
+  <text x="348" y="486" class="room-area">~4 м²</text>
+  
+  <!-- 8. Коридор (нижний правый) -->
+  <rect x="648" y="438" width="170" height="110" class="room-fill"/>
+  <text x="733" y="491" class="room-label">Коридор</text>
+  <text x="733" y="506" class="room-area">~5 м²</text>
+  
+  <!-- === BALCONY === -->
+  <!-- Balcony on the left side (living room) -->
+  <rect x="60" y="548" width="398" height="50" fill="none" stroke="#2c2c2c" stroke-width="2" stroke-dasharray="6,3"/>
+  <rect x="72" y="552" width="374" height="40" class="room-fill-balcony"/>
+  <text x="259" y="577" class="room-label">Балкон</text>
+  
+  <!-- === WINDOWS === -->
+  <!-- Living room windows (top wall) -->
+  <rect x="110" y="80" width="80" height="12" class="window"/>
+  <rect x="220" y="80" width="80" height="12" class="window"/>
+  <rect x="330" y="80" width="80" height="12" class="window"/>
+  
+  <!-- Bedroom 1 window (top) -->
+  <rect x="490" y="80" width="100" height="12" class="window"/>
+  
+  <!-- Bedroom 2 window (top) -->
+  <rect x="670" y="80" width="110" height="12" class="window"/>
+  
+  <!-- Living room window (left wall) -->
+  <rect x="60" y="150" width="12" height="80" class="window"/>
+  <rect x="60" y="280" width="12" height="60" class="window"/>
+  
+  <!-- === DOORS (simplified as gaps + arcs) === -->
+  
+  <!-- Door: living room to hallway -->
+  <rect x="380" y="388" width="40" height="10" fill="#faf8f4"/>
+  <path d="M380,388 Q400,368 420,388" class="door-arc"/>
+  
+  <!-- Door: hallway entrance (bottom wall) -->
+  <rect x="130" y="548" width="40" height="12" fill="#faf8f4"/>
+  <path d="M130,548 Q150,528 170,548" class="door-arc"/>
+  
+  <!-- Door: bedroom 1 -->
+  <rect x="458" y="200" width="10" height="35" fill="#faf8f4"/>
+  <path d="M468,200 Q468,218 458,235" class="door-arc"/>
+  
+  <!-- Door: bedroom 2 -->
+  <rect x="638" y="200" width="10" height="35" fill="#faf8f4"/>
+  <path d="M648,200 Q648,218 638,235" class="door-arc"/>
+  
+  <!-- Door: bathroom 1 -->
+  <rect x="458" y="340" width="10" height="30" fill="#faf8f4"/>
+  <path d="M468,340 Q468,355 458,370" class="door-arc"/>
+  
+  <!-- Door: bathroom 2 -->
+  <rect x="638" y="330" width="10" height="30" fill="#faf8f4"/>
+  <path d="M648,330 Q648,345 638,360" class="door-arc"/>
+  
+  <!-- Door: wardrobe -->
+  <rect x="280" y="388" width="30" height="10" fill="#faf8f4"/>
+  <path d="M280,388 Q295,373 310,388" class="door-arc"/>
+  
+  <!-- === COMPASS === -->
+  <circle cx="840" cy="560" r="22" fill="none" stroke="#8a7a60" stroke-width="1.5"/>
+  <text x="840" y="545" class="compass" font-size="14">С</text>
+  <line x1="840" y1="548" x2="840" y2="538" stroke="#2c2c2c" stroke-width="2"/>
+  <text x="840" y="583" class="compass" font-size="10">Ю</text>
+  <text x="820" y="565" class="compass" font-size="10">З</text>
+  <text x="860" y="565" class="compass" font-size="10">В</text>
+  
+  <!-- === LEGEND === -->
+  <rect x="65" y="590" width="14" height="10" fill="#f5f0e8" stroke="#2c2c2c" stroke-width="0.5"/>
+  <text x="84" y="600" font-family="Georgia" font-size="9" fill="#3a3020">Жилые помещения</text>
+  <rect x="185" y="590" width="14" height="10" fill="#ede8dc" stroke="#2c2c2c" stroke-width="0.5"/>
+  <text x="204" y="600" font-family="Georgia" font-size="9" fill="#3a3020">Спальни</text>
+  <rect x="265" y="590" width="14" height="10" fill="#e8edf5" stroke="#2c2c2c" stroke-width="0.5"/>
+  <text x="284" y="600" font-family="Georgia" font-size="9" fill="#3a3020">Санузлы</text>
+  <rect x="345" y="590" width="14" height="10" fill="#eaf5ea" stroke="#2c2c2c" stroke-width="0.5"/>
+  <text x="364" y="600" font-family="Georgia" font-size="9" fill="#3a3020">Балкон</text>
+  <rect x="405" y="590" width="14" height="10" fill="#b8d4e8" stroke="#2c2c2c" stroke-width="0.5"/>
+  <text x="424" y="600" font-family="Georgia" font-size="9" fill="#3a3020">Окна</text>
+  
+</svg>

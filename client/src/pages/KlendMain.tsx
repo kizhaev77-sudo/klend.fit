@@ -1,0 +1,665 @@
+/**
+ * KLEND.SPACE — Главная страница агентства
+ * Design: Quiet Luxury / Editorial Dark
+ * Philosophy: Тёмный фон, золотые акценты, элегантная типографика
+ * Color: #0a0a0a (bg), #d4aa5a (gold), #f5f0e8 (cream text), #1a1a1a (card bg)
+ * Typography: Cormorant Garamond (serif, headlines) + Inter (sans, body)
+ * Layout: Full-bleed hero, asymmetric portfolio grid, step-by-step intake form
+ */
+
+import { useState, useEffect, useRef } from "react";
+import { Link } from "wouter";
+import {
+  ArrowRight, Phone, ChevronDown, CheckCircle2,
+  Upload, X, ChevronLeft, ChevronRight, Send, Loader2
+} from "lucide-react";
+
+// ── Palette ──────────────────────────────────────────────────────────────────
+const C = {
+  bg: "#0a0a0a",
+  surface: "#111111",
+  card: "#161616",
+  border: "rgba(212,170,90,0.18)",
+  gold: "#d4aa5a",
+  goldLight: "rgba(212,170,90,0.12)",
+  cream: "#f5f0e8",
+  muted: "#888",
+  white: "#ffffff",
+};
+
+// ── Portfolio works ───────────────────────────────────────────────────────────
+const WORKS = [
+  {
+    id: "diplomat",
+    label: "Недвижимость",
+    title: "ЖК «Дипломат»",
+    city: "Санкт-Петербург",
+    desc: "Лендинг для элитной квартиры. Тёмный аристократичный стиль, акцент на эксклюзивность и атмосферу.",
+    tags: ["Элитная недвижимость", "Тёмный стиль", "Форма заявки"],
+    img: "/manus-storage/diplomat-preview_1b64b193.webp",
+    href: "/diplomat",
+  },
+  {
+    id: "len-vanil",
+    label: "Кондитерская",
+    title: "Лён и Ваниль",
+    city: "Санкт-Петербург",
+    desc: "Лендинг для авторской кондитерской. Тёплая кремовая эстетика, меню с ценами, форма заказа.",
+    tags: ["Авторские десерты", "Тёплый стиль", "Меню + заказ"],
+    img: "/manus-storage/len-vanil-preview_9ca14d47.webp",
+    href: "/len-vanil",
+  },
+  {
+    id: "barber",
+    label: "Барбершоп",
+    title: "Безумный Барбер",
+    city: "Санкт-Петербург",
+    desc: "Лендинг для барбершопа. Тёмный индустриальный стиль, прайс-лист, форма записи.",
+    tags: ["Барбершоп", "Тёмный индастриал", "Запись онлайн"],
+    img: "/manus-storage/barber-preview_a9f9829d.webp",
+    href: "/barber",
+  },
+  {
+    id: "remont",
+    label: "Ремонт",
+    title: "РемонтПро",
+    city: "Санкт-Петербург",
+    desc: "Лендинг для бригады по ремонту квартир. Тёплый «штукатурный» стиль, этапы работ, форма заявки со сметой.",
+    tags: ["Ремонт под ключ", "Тёплый стиль", "Форма-опросник"],
+    img: "/manus-storage/barber-preview_a9f9829d.webp",
+    href: "/remont",
+  },
+];
+
+// ── Fade-up animation hook ────────────────────────────────────────────────────
+function useFadeUp() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { el.classList.add("kl-visible"); obs.unobserve(el); } },
+      { threshold: 0.05 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+}
+
+// ── Multi-step intake form ────────────────────────────────────────────────────
+type FormData = {
+  businessType: string;
+  businessDesc: string;
+  goal: string;
+  audience: string;
+  style: string;
+  references: string;
+  deadline: string;
+  budget: string;
+  extras: string;
+  name: string;
+  contact: string;
+  files: File[];
+};
+
+const INITIAL: FormData = {
+  businessType: "", businessDesc: "", goal: "", audience: "",
+  style: "", references: "", deadline: "", budget: "",
+  extras: "", name: "", contact: "", files: [],
+};
+
+const STEPS = [
+  {
+    id: "businessType",
+    title: "Какой у вас бизнес?",
+    subtitle: "Выберите нишу или напишите свою",
+    type: "chips",
+    options: ["Недвижимость", "Ресторан / кафе", "Красота / уход", "Медицина", "Образование", "Услуги для бизнеса", "Интернет-магазин", "Другое"],
+  },
+  {
+    id: "businessDesc",
+    title: "Расскажите о вашем бизнесе",
+    subtitle: "Что продаёте, чем отличаетесь от конкурентов?",
+    type: "textarea",
+    placeholder: "Например: Авторская кондитерская в СПб, делаем моти и картошечку с живыми цветами. Работаем 2 года, 500+ довольных клиентов...",
+  },
+  {
+    id: "goal",
+    title: "Какова цель сайта?",
+    subtitle: "Что должен делать посетитель?",
+    type: "chips",
+    options: ["Оставить заявку / позвонить", "Записаться онлайн", "Купить товар", "Узнать о компании", "Скачать материал", "Другое"],
+  },
+  {
+    id: "audience",
+    title: "Кто ваша аудитория?",
+    subtitle: "Опишите типичного клиента",
+    type: "textarea",
+    placeholder: "Например: Женщины 25–40 лет, Петербург, ищут подарок или хотят побаловать себя. Ценят красоту, натуральность и уют...",
+  },
+  {
+    id: "style",
+    title: "Какой стиль вам близок?",
+    subtitle: "Выберите одно или несколько направлений",
+    type: "chips",
+    options: ["Минимализм / чистота", "Тёмный / премиум", "Тёплый / уютный", "Яркий / энергичный", "Классика / элегантность", "Современный / технологичный"],
+  },
+  {
+    id: "references",
+    title: "Есть референсы или примеры?",
+    subtitle: "Ссылки на сайты, которые вам нравятся (необязательно)",
+    type: "textarea",
+    placeholder: "https://example.com — нравится структура\nhttps://another.com — нравится цветовая гамма\n\nИли просто опишите словами...",
+  },
+  {
+    id: "files",
+    title: "Загрузите материалы",
+    subtitle: "Логотип, фото, брендбук — всё, что есть (необязательно)",
+    type: "upload",
+  },
+  {
+    id: "deadline",
+    title: "Когда нужен сайт?",
+    subtitle: "Ориентировочные сроки",
+    type: "chips",
+    options: ["Как можно скорее (до 1 недели)", "В течение 2 недель", "В течение месяца", "Не горит, сделайте хорошо"],
+  },
+  {
+    id: "budget",
+    title: "Какой бюджет?",
+    subtitle: "Поможет сразу предложить подходящее решение",
+    type: "chips",
+    options: ["30 000 – 50 000 ₽", "50 000 – 100 000 ₽", "100 000 – 200 000 ₽", "Обсудим индивидуально"],
+  },
+  {
+    id: "extras",
+    title: "Что ещё важно?",
+    subtitle: "Любые пожелания, вопросы или особенности проекта",
+    type: "textarea",
+    placeholder: "Например: нужна интеграция с CRM, хочу чтобы заявки приходили в Telegram, есть корпоративный стиль...",
+  },
+  {
+    id: "contact",
+    title: "Как с вами связаться?",
+    subtitle: "Имя и телефон или Telegram",
+    type: "contact",
+  },
+];
+
+function IntakeForm() {
+  const [step, setStep] = useState(0);
+  const [data, setData] = useState<FormData>(INITIAL);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [customChip, setCustomChip] = useState("");
+
+  const current = STEPS[step];
+  const progress = ((step) / STEPS.length) * 100;
+
+  function setValue(field: keyof FormData, val: string | string[] | File[]) {
+    setData(prev => ({ ...prev, [field]: val }));
+  }
+
+  function toggleChip(field: keyof FormData, val: string) {
+    const cur = (data[field] as string) || "";
+    if (cur === val) setValue(field, "");
+    else setValue(field, val);
+  }
+
+  function canAdvance() {
+    const val = data[current.id as keyof FormData];
+    if (current.id === "files" || current.id === "references" || current.id === "extras") return true;
+    if (current.id === "contact") return !!(data.name && data.contact);
+    if (Array.isArray(val)) return val.length > 0;
+    return !!(val as string)?.trim();
+  }
+
+  async function handleSubmit() {
+    setSending(true);
+    try {
+      const { files, ...payload } = data;
+      const resp = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!resp.ok) throw new Error("Request failed");
+      setSubmitted(true);
+    } catch (e) {
+      console.error("Lead submit failed:", e);
+      setSubmitError(true);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  if (submitted) {
+    return (
+      <div style={{ textAlign: "center", padding: "60px 20px" }}>
+        <div style={{ width: 64, height: 64, borderRadius: "50%", background: C.goldLight, border: `1px solid ${C.gold}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
+          <CheckCircle2 size={28} color={C.gold} />
+        </div>
+        <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(24px,4vw,36px)", color: C.cream, marginBottom: 12 }}>
+          Заявка получена
+        </h3>
+        <p style={{ color: C.muted, fontSize: 16, lineHeight: 1.6, maxWidth: 420, margin: "0 auto 32px" }}>
+          Кирилл свяжется с вами в течение часа. Если срочно — звоните напрямую.
+        </p>
+        <a href="tel:+79219669188" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.gold, color: "#000", padding: "14px 28px", borderRadius: 4, fontFamily: "Inter, sans-serif", fontSize: 14, fontWeight: 600, letterSpacing: "0.08em", textDecoration: "none" }}>
+          <Phone size={16} /> +7 (921) 966-91-88
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ maxWidth: 640, margin: "0 auto" }}>
+      {/* Progress bar */}
+      <div style={{ marginBottom: 36 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <span style={{ color: C.muted, fontSize: 13, fontFamily: "Inter, sans-serif" }}>
+            Шаг {step + 1} из {STEPS.length}
+          </span>
+          <span style={{ color: C.gold, fontSize: 13, fontFamily: "Inter, sans-serif" }}>
+            {Math.round(progress)}%
+          </span>
+        </div>
+        <div style={{ height: 2, background: "rgba(255,255,255,0.06)", borderRadius: 2, overflow: "hidden" }}>
+          <div style={{ height: "100%", width: `${progress}%`, background: C.gold, transition: "width 0.4s cubic-bezier(0.23,1,0.32,1)", borderRadius: 2 }} />
+        </div>
+      </div>
+
+      {/* Question */}
+      <div style={{ marginBottom: 32 }}>
+        <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(22px,3.5vw,32px)", color: C.cream, marginBottom: 8, lineHeight: 1.2 }}>
+          {current.title}
+        </h3>
+        <p style={{ color: C.muted, fontSize: 15, fontFamily: "Inter, sans-serif" }}>{current.subtitle}</p>
+      </div>
+
+      {/* Input area */}
+      {current.type === "chips" && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 32 }}>
+          {current.options!.map(opt => {
+            const active = data[current.id as keyof FormData] === opt;
+            return (
+              <button key={opt} onClick={() => toggleChip(current.id as keyof FormData, opt)}
+                style={{ padding: "10px 18px", borderRadius: 3, border: `1px solid ${active ? C.gold : "rgba(255,255,255,0.12)"}`, background: active ? C.goldLight : "transparent", color: active ? C.gold : C.muted, fontFamily: "Inter, sans-serif", fontSize: 14, cursor: "pointer", transition: "all 0.2s", letterSpacing: "0.02em" }}>
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {current.type === "textarea" && (
+        <textarea value={data[current.id as keyof FormData] as string}
+          onChange={e => setValue(current.id as keyof FormData, e.target.value)}
+          placeholder={current.placeholder}
+          rows={5}
+          style={{ width: "100%", background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, padding: "16px", color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 15, lineHeight: 1.6, resize: "vertical", outline: "none", marginBottom: 32, boxSizing: "border-box" }}
+        />
+      )}
+
+      {current.type === "upload" && (
+        <div style={{ marginBottom: 32 }}>
+          <label style={{ display: "block", border: `2px dashed ${C.border}`, borderRadius: 4, padding: "40px 20px", textAlign: "center", cursor: "pointer", transition: "border-color 0.2s" }}
+            onDragOver={e => e.preventDefault()}
+            onDrop={e => { e.preventDefault(); const files = Array.from(e.dataTransfer.files); setValue("files", [...data.files, ...files]); }}>
+            <input type="file" multiple style={{ display: "none" }}
+              onChange={e => { const files = Array.from(e.target.files || []); setValue("files", [...data.files, ...files]); }} />
+            <Upload size={28} color={C.muted} style={{ marginBottom: 12 }} />
+            <p style={{ color: C.muted, fontFamily: "Inter, sans-serif", fontSize: 14, marginBottom: 4 }}>Перетащите файлы сюда или нажмите</p>
+            <p style={{ color: "rgba(136,136,136,0.6)", fontFamily: "Inter, sans-serif", fontSize: 12 }}>PNG, JPG, PDF, AI, SVG — до 20 МБ каждый</p>
+          </label>
+          {data.files.length > 0 && (
+            <div style={{ marginTop: 12, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {data.files.map((f, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, background: C.card, border: `1px solid ${C.border}`, borderRadius: 3, padding: "6px 10px" }}>
+                  <span style={{ color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 13 }}>{f.name}</span>
+                  <button onClick={() => setValue("files", data.files.filter((_, j) => j !== i))}
+                    style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex" }}>
+                    <X size={14} color={C.muted} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {current.type === "contact" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 32 }}>
+          <input value={data.name} onChange={e => setValue("name", e.target.value)}
+            placeholder="Ваше имя"
+            style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, padding: "14px 16px", color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box" }} />
+          <input value={data.contact} onChange={e => setValue("contact", e.target.value)}
+            placeholder="+7 (___) ___-__-__ или @username"
+            style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, padding: "14px 16px", color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box" }} />
+        </div>
+      )}
+
+      {/* Navigation */}
+      {submitError && (
+        <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(220,80,80,0.1)", border: "1px solid rgba(220,80,80,0.3)", borderRadius: 4, color: "#e08080", fontFamily: "Inter, sans-serif", fontSize: 13 }}>
+          Не удалось отправить заявку. Попробуйте ещё раз или позвоните напрямую: +7 (921) 966-91-88
+        </div>
+      )}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {step > 0 && (
+          <button onClick={() => setStep(s => s - 1)}
+            style={{ display: "flex", alignItems: "center", gap: 6, background: "transparent", border: `1px solid rgba(255,255,255,0.12)`, borderRadius: 3, padding: "13px 20px", color: C.muted, fontFamily: "Inter, sans-serif", fontSize: 14, cursor: "pointer", letterSpacing: "0.06em" }}>
+            <ChevronLeft size={16} /> НАЗАД
+          </button>
+        )}
+
+        {step < STEPS.length - 1 ? (
+          <button onClick={() => setStep(s => s + 1)} disabled={!canAdvance()}
+            style={{ display: "flex", alignItems: "center", gap: 8, background: canAdvance() ? C.gold : "rgba(212,170,90,0.2)", color: canAdvance() ? "#000" : C.muted, border: "none", borderRadius: 3, padding: "14px 28px", fontFamily: "Inter, sans-serif", fontSize: 14, fontWeight: 600, cursor: canAdvance() ? "pointer" : "not-allowed", letterSpacing: "0.08em", transition: "all 0.2s" }}>
+            ДАЛЕЕ <ArrowRight size={16} />
+          </button>
+        ) : (
+          <button onClick={handleSubmit} disabled={!canAdvance() || sending}
+            style={{ display: "flex", alignItems: "center", gap: 8, background: canAdvance() ? C.gold : "rgba(212,170,90,0.2)", color: canAdvance() ? "#000" : C.muted, border: "none", borderRadius: 3, padding: "14px 28px", fontFamily: "Inter, sans-serif", fontSize: 14, fontWeight: 600, cursor: canAdvance() ? "pointer" : "not-allowed", letterSpacing: "0.08em", transition: "all 0.2s" }}>
+            {sending ? <><Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> ОТПРАВКА...</> : <><Send size={16} /> ОТПРАВИТЬ ЗАЯВКУ</>}
+          </button>
+        )}
+
+        {(current.type === "upload" || current.type === "references" || current.type === "extras") && step < STEPS.length - 1 && (
+          <button onClick={() => setStep(s => s + 1)}
+            style={{ background: "transparent", border: "none", color: C.muted, fontFamily: "Inter, sans-serif", fontSize: 13, cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 3 }}>
+            пропустить
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+export default function KlendMain() {
+  const heroRef = useFadeUp();
+  const worksRef = useFadeUp();
+  const servicesRef = useFadeUp();
+  const processRef = useFadeUp();
+  const formRef = useFadeUp();
+
+  return (
+    <div style={{ background: C.bg, minHeight: "100vh", color: C.cream }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
+        .kl-fade { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.23,1,0.32,1), transform 0.7s cubic-bezier(0.23,1,0.32,1); }
+        .kl-visible { opacity: 1 !important; transform: translateY(0) !important; }
+        .kl-work-card:hover .kl-work-img { transform: scale(1.04); }
+        .kl-work-card:hover .kl-work-overlay { opacity: 1; }
+        .kl-work-card:hover { border-color: rgba(212,170,90,0.4) !important; }
+        .kl-nav-link:hover { color: #d4aa5a !important; }
+        .kl-cta:hover { background: #c49a48 !important; }
+        .kl-cta-outline:hover { border-color: rgba(212,170,90,0.6) !important; color: #d4aa5a !important; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        .kl-dot { width:6px; height:6px; border-radius:50%; background:#d4aa5a; animation: pulse 2s ease-in-out infinite; }
+      `}</style>
+
+      {/* ── NAV ── */}
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(10,10,10,0.92)", backdropFilter: "blur(12px)", borderBottom: `1px solid ${C.border}`, padding: "0 clamp(20px,5vw,80px)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
+          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 500, color: C.cream, letterSpacing: "0.04em" }}>
+            klend<span style={{ color: C.gold }}>.space</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "clamp(16px,3vw,40px)" }}>
+            {[["#works", "РАБОТЫ"], ["#services", "УСЛУГИ"], ["#process", "ПРОЦЕСС"], ["#form", "ЗАЯВКА"]].map(([href, label]) => (
+              <a key={href} href={href} className="kl-nav-link"
+                style={{ color: C.muted, fontFamily: "Inter, sans-serif", fontSize: 12, letterSpacing: "0.1em", textDecoration: "none", transition: "color 0.2s" }}>
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      {/* ── HERO ── */}
+      <section style={{ minHeight: "100vh", display: "flex", alignItems: "center", padding: "120px clamp(20px,5vw,80px) 80px", position: "relative", overflow: "hidden" }}>
+        {/* Background grid */}
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(212,170,90,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(212,170,90,0.04) 1px, transparent 1px)", backgroundSize: "80px 80px", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 60% at 70% 50%, rgba(212,170,90,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+        <div ref={heroRef} className="kl-fade" style={{ maxWidth: 1200, margin: "0 auto", width: "100%", position: "relative" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, border: `1px solid ${C.border}`, borderRadius: 2, padding: "6px 14px", marginBottom: 32 }}>
+            <div className="kl-dot" />
+            <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.14em", color: C.muted }}>СТУДИЯ ВЕБ-ДИЗАЙНА · ЛЕНДИНГИ И САЙТЫ</span>
+          </div>
+
+          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(52px,8vw,110px)", fontWeight: 400, lineHeight: 0.95, marginBottom: 32, letterSpacing: "-0.02em" }}>
+            Сайты,<br />
+            <em style={{ color: C.gold, fontStyle: "italic" }}>которые</em><br />
+            продают.
+          </h1>
+
+          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(15px,1.8vw,18px)", color: C.muted, maxWidth: 480, lineHeight: 1.7, marginBottom: 48 }}>
+            Создаём элегантные лендинги и сайты для бизнеса, который ценит качество. Каждый проект — точное попадание в аудиторию.
+          </p>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            <a href="#form" className="kl-cta"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.gold, color: "#000", padding: "16px 32px", borderRadius: 3, fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, letterSpacing: "0.1em", textDecoration: "none", transition: "background 0.2s" }}>
+              ОСТАВИТЬ ЗАЯВКУ <ArrowRight size={16} />
+            </a>
+            <a href="#works" className="kl-cta-outline"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, border: `1px solid rgba(255,255,255,0.15)`, color: C.muted, padding: "15px 28px", borderRadius: 3, fontFamily: "Inter, sans-serif", fontSize: 13, letterSpacing: "0.1em", textDecoration: "none", transition: "all 0.2s" }}>
+              СМОТРЕТЬ РАБОТЫ
+            </a>
+          </div>
+
+          <div style={{ marginTop: 64, display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap" }}>
+            <div>
+              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 36, color: C.cream }}>от 30 000 ₽</div>
+              <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: C.muted, letterSpacing: "0.08em", marginTop: 2 }}>СТОИМОСТЬ РАБОТ</div>
+            </div>
+            <div style={{ width: 1, height: 40, background: C.border }} />
+            <div>
+              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 36, color: C.cream }}>3–7 дней</div>
+              <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: C.muted, letterSpacing: "0.08em", marginTop: 2 }}>СРОК РАЗРАБОТКИ</div>
+            </div>
+            <div style={{ width: 1, height: 40, background: C.border }} />
+            <div>
+              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 36, color: C.cream }}>300 ₽/мес</div>
+              <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: C.muted, letterSpacing: "0.08em", marginTop: 2 }}>ХОСТИНГ</div>
+            </div>
+          </div>
+        </div>
+
+        <a href="#works" style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, color: C.muted, textDecoration: "none" }}>
+          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.12em" }}>ЛИСТАТЬ</span>
+          <ChevronDown size={18} style={{ animation: "pulse 2s ease-in-out infinite" }} />
+        </a>
+      </section>
+
+      {/* ── WORKS ── */}
+      <section id="works" style={{ padding: "100px clamp(20px,5vw,80px)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div ref={worksRef} className="kl-fade">
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 64, flexWrap: "wrap", gap: 16 }}>
+              <div>
+                <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.14em", color: C.gold, marginBottom: 12 }}>НАША РАБОТА</div>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(36px,5vw,64px)", fontWeight: 400, lineHeight: 1.1 }}>
+                  Примеры <em style={{ color: C.gold, fontStyle: "italic" }}>лендингов.</em>
+                </h2>
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 24 }}>
+              {WORKS.map((w, i) => (
+                <div key={w.id} className="kl-work-card"
+                  style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, overflow: "hidden", transition: "border-color 0.3s", animationDelay: `${i * 0.1}s` }}>
+                  {/* Image */}
+                  <div style={{ position: "relative", height: 220, overflow: "hidden" }}>
+                    <img src={w.img} alt={w.title} className="kl-work-img"
+                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", transition: "transform 0.5s cubic-bezier(0.23,1,0.32,1)" }} />
+                    <div className="kl-work-overlay"
+                      style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.6)", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0, transition: "opacity 0.3s" }}>
+                      <Link href={w.href}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.gold, color: "#000", padding: "12px 24px", borderRadius: 3, fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textDecoration: "none" }}>
+                        ОТКРЫТЬ САЙТ <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                    <div style={{ position: "absolute", top: 14, left: 14, background: "rgba(10,10,10,0.8)", border: `1px solid ${C.border}`, borderRadius: 2, padding: "4px 10px", fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.1em", color: C.gold }}>
+                      {w.label}
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div style={{ padding: "24px" }}>
+                    <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 500, color: C.cream, marginBottom: 4 }}>
+                      {w.title}
+                    </h3>
+                    <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: C.muted, letterSpacing: "0.06em", marginBottom: 12 }}>
+                      {w.city}
+                    </div>
+                    <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: C.muted, lineHeight: 1.6, marginBottom: 16 }}>
+                      {w.desc}
+                    </p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
+                      {w.tags.map(t => (
+                        <span key={t} style={{ background: C.goldLight, border: `1px solid ${C.border}`, borderRadius: 2, padding: "3px 8px", fontFamily: "Inter, sans-serif", fontSize: 11, color: C.gold, letterSpacing: "0.04em" }}>
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                    <Link href={w.href}
+                      style={{ display: "inline-flex", alignItems: "center", gap: 6, color: C.gold, fontFamily: "Inter, sans-serif", fontSize: 13, letterSpacing: "0.06em", textDecoration: "none" }}>
+                      ОТКРЫТЬ САЙТ <ArrowRight size={14} />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SERVICES ── */}
+      <section id="services" style={{ padding: "100px clamp(20px,5vw,80px)", background: C.surface }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div ref={servicesRef} className="kl-fade">
+            <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.14em", color: C.gold, marginBottom: 12 }}>УСЛУГИ</div>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(36px,5vw,64px)", fontWeight: 400, lineHeight: 1.1, marginBottom: 64 }}>
+              Что мы <em style={{ color: C.gold, fontStyle: "italic" }}>делаем.</em>
+            </h2>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 1, background: C.border }}>
+              {[
+                { n: "01", title: "Лендинг под ключ", desc: "Одностраничный продающий сайт: стратегия, дизайн, тексты, вёрстка." },
+                { n: "02", title: "Сайт-визитка", desc: "Многостраничный сайт для бизнеса, агента или личного бренда." },
+                { n: "03", title: "Редизайн", desc: "Обновляем устаревший сайт: новый дизайн, современная вёрстка." },
+                { n: "04", title: "Дизайн-система", desc: "Единый визуальный язык бренда для всех носителей." },
+              ].map(s => (
+                <div key={s.n} style={{ background: C.surface, padding: "40px 32px" }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 48, color: C.border, lineHeight: 1, marginBottom: 20 }}>{s.n}</div>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, color: C.cream, marginBottom: 12 }}>{s.title}</h3>
+                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: C.muted, lineHeight: 1.6 }}>{s.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 40, padding: "24px 32px", background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+              <p style={{ fontFamily: "Inter, sans-serif", fontSize: 15, color: C.muted }}>
+                Стоимость любого проекта — <strong style={{ color: C.cream }}>от 30 000 ₽.</strong> Точная цена после обсуждения задачи.
+              </p>
+              <a href="#form" className="kl-cta"
+                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.gold, color: "#000", padding: "13px 24px", borderRadius: 3, fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textDecoration: "none", transition: "background 0.2s", whiteSpace: "nowrap" }}>
+                ОБСУДИТЬ ПРОЕКТ <ArrowRight size={14} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PROCESS ── */}
+      <section id="process" style={{ padding: "100px clamp(20px,5vw,80px)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div ref={processRef} className="kl-fade">
+            <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.14em", color: C.gold, marginBottom: 12 }}>КАК МЫ РАБОТАЕМ</div>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(36px,5vw,64px)", fontWeight: 400, lineHeight: 1.1, marginBottom: 64 }}>
+              Четыре шага <em style={{ color: C.gold, fontStyle: "italic" }}>до результата.</em>
+            </h2>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 32 }}>
+              {[
+                { n: "1", title: "Бриф и стратегия", desc: "Изучаем бизнес, аудиторию и конкурентов. Формируем позиционирование." },
+                { n: "2", title: "Дизайн-концепция", desc: "Создаём уникальный визуальный образ: палитра, типографика, ключевые экраны." },
+                { n: "3", title: "Вёрстка и разработка", desc: "Чистый код, адаптив под все устройства, подключение аналитики." },
+                { n: "4", title: "Запуск и поддержка", desc: "Публикуем сайт, передаём доступы, сопровождаем при необходимости." },
+              ].map((p, i) => (
+                <div key={p.n} style={{ position: "relative" }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "50%", border: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+                    <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, color: C.gold }}>{p.n}</span>
+                  </div>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, color: C.cream, marginBottom: 10 }}>{p.title}</h3>
+                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: C.muted, lineHeight: 1.6 }}>{p.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── INTAKE FORM ── */}
+      <section id="form" style={{ padding: "100px clamp(20px,5vw,80px)", background: C.surface }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div ref={formRef} className="kl-fade">
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "start" }}>
+              {/* Left: info */}
+              <div>
+                <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.14em", color: C.gold, marginBottom: 12 }}>ЗАЯВКА</div>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(36px,4vw,56px)", fontWeight: 400, lineHeight: 1.1, marginBottom: 24 }}>
+                  Расскажите о <em style={{ color: C.gold, fontStyle: "italic" }}>вашем проекте.</em>
+                </h2>
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: 15, color: C.muted, lineHeight: 1.7, marginBottom: 40 }}>
+                  Ответьте на несколько вопросов — это поможет нам понять задачу и подготовить точное предложение ещё до первого звонка.
+                </p>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  {[
+                    { icon: "✓", text: "Бесплатная консультация" },
+                    { icon: "✓", text: "Ответим в течение часа" },
+                    { icon: "✓", text: "Договор и гарантии" },
+                    { icon: "✓", text: "Конфиденциальность данных" },
+                  ].map(item => (
+                    <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <div style={{ width: 24, height: 24, borderRadius: "50%", background: C.goldLight, border: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <span style={{ color: C.gold, fontSize: 12 }}>{item.icon}</span>
+                      </div>
+                      <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: C.muted }}>{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ marginTop: 48, paddingTop: 32, borderTop: `1px solid ${C.border}` }}>
+                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: C.muted }}>Кирилл · Ежедневно с 9:00 до 21:00</p>
+                </div>
+              </div>
+
+              {/* Right: form */}
+              <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, padding: "clamp(24px,4vw,48px)" }}>
+                <IntakeForm />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FOOTER ── */}
+      <footer style={{ padding: "32px clamp(20px,5vw,80px)", borderTop: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 18, color: C.muted }}>
+          klend<span style={{ color: C.gold }}>.space</span>
+        </div>
+        <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(136,136,136,0.5)", letterSpacing: "0.04em" }}>
+          Студия веб-дизайна · Лендинги и сайты
+        </div>
+      </footer>
+    </div>
+  );
+}
