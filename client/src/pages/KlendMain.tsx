@@ -59,16 +59,6 @@ const WORKS = [
     img: "/manus-storage/barber-preview_a9f9829d.webp",
     href: "/barber",
   },
-  {
-    id: "remont",
-    label: "Ремонт",
-    title: "РемонтПро",
-    city: "Санкт-Петербург",
-    desc: "Лендинг для бригады по ремонту квартир. Тёплый «штукатурный» стиль, этапы работ, форма заявки со сметой.",
-    tags: ["Ремонт под ключ", "Тёплый стиль", "Форма-опросник"],
-    img: "/manus-storage/barber-preview_a9f9829d.webp",
-    href: "/remont",
-  },
 ];
 
 // ── Fade-up animation hook ────────────────────────────────────────────────────
@@ -141,7 +131,7 @@ const STEPS = [
   {
     id: "style",
     title: "Какой стиль вам близок?",
-    subtitle: "Выберите одно или несколько направлений",
+    subtitle: "Выберите близкое направление",
     type: "chips",
     options: ["Минимализм / чистота", "Тёмный / премиум", "Тёплый / уютный", "Яркий / энергичный", "Классика / элегантность", "Современный / технологичный"],
   },
@@ -196,7 +186,9 @@ function IntakeForm() {
   const [customChip, setCustomChip] = useState("");
 
   const current = STEPS[step];
-  const progress = ((step) / STEPS.length) * 100;
+  const isLast = step === STEPS.length - 1;
+  // Прогресс: 0% на первом шаге → 100% на последнем
+  const progress = (step / (STEPS.length - 1)) * 100;
 
   function setValue(field: keyof FormData, val: string | string[] | File[]) {
     setData(prev => ({ ...prev, [field]: val }));
@@ -216,8 +208,12 @@ function IntakeForm() {
     return !!(val as string)?.trim();
   }
 
+  function goNext() { if (canAdvance() && !isLast) setStep(s => s + 1); }
+  function goBack() { if (step > 0) setStep(s => s - 1); }
+
   async function handleSubmit() {
     setSending(true);
+    setSubmitError(false);
     try {
       const { files, ...payload } = data;
       const resp = await fetch("/api/lead", {
@@ -244,18 +240,19 @@ function IntakeForm() {
         <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(24px,4vw,36px)", color: C.cream, marginBottom: 12 }}>
           Заявка получена
         </h3>
-        <p style={{ color: C.muted, fontSize: 16, lineHeight: 1.6, maxWidth: 420, margin: "0 auto 32px" }}>
-          Кирилл свяжется с вами в течение часа. Если срочно — звоните напрямую.
+        <p style={{ color: C.muted, fontSize: 16, lineHeight: 1.6, maxWidth: 420, margin: "0 auto" }}>
+          Спасибо! Мы свяжемся с вами в течение часа.
         </p>
-        <a href="tel:+79219669188" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.gold, color: "#000", padding: "14px 28px", borderRadius: 4, fontFamily: "Inter, sans-serif", fontSize: 14, fontWeight: 600, letterSpacing: "0.08em", textDecoration: "none" }}>
-          <Phone size={16} /> +7 (921) 966-91-88
-        </a>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto" }}>
+    <form
+      onSubmit={e => { e.preventDefault(); if (isLast) handleSubmit(); else goNext(); }}
+      style={{ maxWidth: 640, margin: "0 auto" }}
+      aria-label="Форма заявки на сайт"
+    >
       {/* Progress bar */}
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -266,7 +263,13 @@ function IntakeForm() {
             {Math.round(progress)}%
           </span>
         </div>
-        <div style={{ height: 2, background: "rgba(255,255,255,0.06)", borderRadius: 2, overflow: "hidden" }}>
+        <div
+          style={{ height: 2, background: "rgba(255,255,255,0.06)", borderRadius: 2, overflow: "hidden" }}
+          role="progressbar"
+          aria-valuenow={Math.round(progress)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
           <div style={{ height: "100%", width: `${progress}%`, background: C.gold, transition: "width 0.4s cubic-bezier(0.23,1,0.32,1)", borderRadius: 2 }} />
         </div>
       </div>
@@ -285,7 +288,9 @@ function IntakeForm() {
           {current.options!.map(opt => {
             const active = data[current.id as keyof FormData] === opt;
             return (
-              <button key={opt} onClick={() => toggleChip(current.id as keyof FormData, opt)}
+              <button key={opt} type="button" onClick={() => toggleChip(current.id as keyof FormData, opt)}
+                className="kl-chip"
+                aria-pressed={active}
                 style={{ padding: "10px 18px", borderRadius: 3, border: `1px solid ${active ? C.gold : "rgba(255,255,255,0.12)"}`, background: active ? C.goldLight : "transparent", color: active ? C.gold : C.muted, fontFamily: "Inter, sans-serif", fontSize: 14, cursor: "pointer", transition: "all 0.2s", letterSpacing: "0.02em" }}>
                 {opt}
               </button>
@@ -299,6 +304,8 @@ function IntakeForm() {
           onChange={e => setValue(current.id as keyof FormData, e.target.value)}
           placeholder={current.placeholder}
           rows={5}
+          className="kl-field"
+          aria-label={current.title}
           style={{ width: "100%", background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, padding: "16px", color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 15, lineHeight: 1.6, resize: "vertical", outline: "none", marginBottom: 32, boxSizing: "border-box" }}
         />
       )}
@@ -319,7 +326,8 @@ function IntakeForm() {
               {data.files.map((f, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, background: C.card, border: `1px solid ${C.border}`, borderRadius: 3, padding: "6px 10px" }}>
                   <span style={{ color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 13 }}>{f.name}</span>
-                  <button onClick={() => setValue("files", data.files.filter((_, j) => j !== i))}
+                  <button type="button" onClick={() => setValue("files", data.files.filter((_, j) => j !== i))}
+                    aria-label={`Удалить файл ${f.name}`}
                     style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex" }}>
                     <X size={14} color={C.muted} />
                   </button>
@@ -334,47 +342,53 @@ function IntakeForm() {
         <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 32 }}>
           <input value={data.name} onChange={e => setValue("name", e.target.value)}
             placeholder="Ваше имя"
+            className="kl-field"
+            aria-label="Ваше имя"
+            autoComplete="name"
             style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, padding: "14px 16px", color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box" }} />
           <input value={data.contact} onChange={e => setValue("contact", e.target.value)}
             placeholder="+7 (___) ___-__-__ или @username"
+            className="kl-field"
+            aria-label="Телефон или Telegram"
+            autoComplete="tel"
             style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, padding: "14px 16px", color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box" }} />
         </div>
       )}
 
       {/* Navigation */}
       {submitError && (
-        <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(220,80,80,0.1)", border: "1px solid rgba(220,80,80,0.3)", borderRadius: 4, color: "#e08080", fontFamily: "Inter, sans-serif", fontSize: 13 }}>
-          Не удалось отправить заявку. Попробуйте ещё раз или позвоните напрямую: +7 (921) 966-91-88
+        <div role="alert" style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(220,80,80,0.1)", border: "1px solid rgba(220,80,80,0.3)", borderRadius: 4, color: "#e08080", fontFamily: "Inter, sans-serif", fontSize: 13 }}>
+          Не удалось отправить заявку. Попробуйте ещё раз чуть позже.
         </div>
       )}
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         {step > 0 && (
-          <button onClick={() => setStep(s => s - 1)}
+          <button type="button" onClick={goBack}
             style={{ display: "flex", alignItems: "center", gap: 6, background: "transparent", border: `1px solid rgba(255,255,255,0.12)`, borderRadius: 3, padding: "13px 20px", color: C.muted, fontFamily: "Inter, sans-serif", fontSize: 14, cursor: "pointer", letterSpacing: "0.06em" }}>
             <ChevronLeft size={16} /> НАЗАД
           </button>
         )}
 
-        {step < STEPS.length - 1 ? (
-          <button onClick={() => setStep(s => s + 1)} disabled={!canAdvance()}
+        {!isLast ? (
+          <button type="submit" disabled={!canAdvance()}
             style={{ display: "flex", alignItems: "center", gap: 8, background: canAdvance() ? C.gold : "rgba(212,170,90,0.2)", color: canAdvance() ? "#000" : C.muted, border: "none", borderRadius: 3, padding: "14px 28px", fontFamily: "Inter, sans-serif", fontSize: 14, fontWeight: 600, cursor: canAdvance() ? "pointer" : "not-allowed", letterSpacing: "0.08em", transition: "all 0.2s" }}>
             ДАЛЕЕ <ArrowRight size={16} />
           </button>
         ) : (
-          <button onClick={handleSubmit} disabled={!canAdvance() || sending}
+          <button type="submit" disabled={!canAdvance() || sending}
             style={{ display: "flex", alignItems: "center", gap: 8, background: canAdvance() ? C.gold : "rgba(212,170,90,0.2)", color: canAdvance() ? "#000" : C.muted, border: "none", borderRadius: 3, padding: "14px 28px", fontFamily: "Inter, sans-serif", fontSize: 14, fontWeight: 600, cursor: canAdvance() ? "pointer" : "not-allowed", letterSpacing: "0.08em", transition: "all 0.2s" }}>
             {sending ? <><Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> ОТПРАВКА...</> : <><Send size={16} /> ОТПРАВИТЬ ЗАЯВКУ</>}
           </button>
         )}
 
-        {(current.type === "upload" || current.type === "references" || current.type === "extras") && step < STEPS.length - 1 && (
-          <button onClick={() => setStep(s => s + 1)}
+        {(current.type === "upload" || current.id === "references" || current.id === "extras") && !isLast && (
+          <button type="button" onClick={goNext}
             style={{ background: "transparent", border: "none", color: C.muted, fontFamily: "Inter, sans-serif", fontSize: 13, cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 3 }}>
             пропустить
           </button>
         )}
       </div>
-    </div>
+    </form>
   );
 }
 
@@ -390,6 +404,9 @@ export default function KlendMain() {
     <div style={{ background: C.bg, minHeight: "100vh", color: C.cream }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
+        html { scroll-behavior: smooth; }
+        /* Заголовки секций не прячутся под фиксированным меню при переходе по якорям */
+        section[id] { scroll-margin-top: 84px; }
         .kl-fade { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.23,1,0.32,1), transform 0.7s cubic-bezier(0.23,1,0.32,1); }
         .kl-visible { opacity: 1 !important; transform: translateY(0) !important; }
         .kl-work-card:hover .kl-work-img { transform: scale(1.04); }
@@ -398,30 +415,54 @@ export default function KlendMain() {
         .kl-nav-link:hover { color: #d4aa5a !important; }
         .kl-cta:hover { background: #c49a48 !important; }
         .kl-cta-outline:hover { border-color: rgba(212,170,90,0.6) !important; color: #d4aa5a !important; }
+        /* Чипы: ховер + видимый фокус */
+        .kl-chip:hover { border-color: rgba(212,170,90,0.5) !important; color: #d4aa5a !important; }
+        /* Видимый фокус для доступности (клавиатура) */
+        .kl-field:focus { border-color: #d4aa5a !important; box-shadow: 0 0 0 3px rgba(212,170,90,0.15); }
+        .kl-chip:focus-visible, .kl-cta:focus-visible, .kl-cta-outline:focus-visible,
+        .kl-nav-link:focus-visible, button:focus-visible, a:focus-visible {
+          outline: 2px solid #d4aa5a; outline-offset: 2px;
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
         .kl-dot { width:6px; height:6px; border-radius:50%; background:#d4aa5a; animation: pulse 2s ease-in-out infinite; }
+        /* Уважение к системной настройке «уменьшить движение» */
+        @media (prefers-reduced-motion: reduce) {
+          html { scroll-behavior: auto; }
+          .kl-fade { transition: none; opacity: 1; transform: none; }
+          .kl-dot, [style*="pulse"] { animation: none !important; }
+        }
+        /* Мобильная навигация: прячем тесные ссылки, оставляем логотип + CTA */
+        @media (max-width: 720px) {
+          .kl-nav-links { display: none !important; }
+        }
       `}</style>
 
       {/* ── NAV ── */}
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(10,10,10,0.92)", backdropFilter: "blur(12px)", borderBottom: `1px solid ${C.border}`, padding: "0 clamp(20px,5vw,80px)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
-          <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 500, color: C.cream, letterSpacing: "0.04em" }}>
+          <a href="#top" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 500, color: C.cream, letterSpacing: "0.04em", textDecoration: "none" }}>
             klend<span style={{ color: C.gold }}>.space</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "clamp(16px,3vw,40px)" }}>
-            {[["#works", "РАБОТЫ"], ["#services", "УСЛУГИ"], ["#process", "ПРОЦЕСС"], ["#form", "ЗАЯВКА"]].map(([href, label]) => (
-              <a key={href} href={href} className="kl-nav-link"
-                style={{ color: C.muted, fontFamily: "Inter, sans-serif", fontSize: 12, letterSpacing: "0.1em", textDecoration: "none", transition: "color 0.2s" }}>
-                {label}
-              </a>
-            ))}
+          </a>
+          <div style={{ display: "flex", alignItems: "center", gap: "clamp(14px,3vw,32px)" }}>
+            <div className="kl-nav-links" style={{ display: "flex", alignItems: "center", gap: "clamp(16px,3vw,40px)" }}>
+              {[["#works", "РАБОТЫ"], ["#services", "УСЛУГИ"], ["#process", "ПРОЦЕСС"], ["#form", "ЗАЯВКА"]].map(([href, label]) => (
+                <a key={href} href={href} className="kl-nav-link"
+                  style={{ color: C.muted, fontFamily: "Inter, sans-serif", fontSize: 12, letterSpacing: "0.1em", textDecoration: "none", transition: "color 0.2s" }}>
+                  {label}
+                </a>
+              ))}
+            </div>
+            <a href="#form" className="kl-cta"
+              style={{ display: "inline-flex", alignItems: "center", gap: 7, background: C.gold, color: "#000", padding: "9px 18px", borderRadius: 3, fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "0.08em", textDecoration: "none", transition: "background 0.2s", whiteSpace: "nowrap" }}>
+              ОСТАВИТЬ ЗАЯВКУ
+            </a>
           </div>
         </div>
       </nav>
 
       {/* ── HERO ── */}
-      <section style={{ minHeight: "100vh", display: "flex", alignItems: "center", padding: "120px clamp(20px,5vw,80px) 80px", position: "relative", overflow: "hidden" }}>
+      <section id="top" style={{ minHeight: "100vh", display: "flex", alignItems: "center", padding: "120px clamp(20px,5vw,80px) 80px", position: "relative", overflow: "hidden" }}>
         {/* Background grid */}
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(212,170,90,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(212,170,90,0.04) 1px, transparent 1px)", backgroundSize: "80px 80px", pointerEvents: "none" }} />
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 60% at 70% 50%, rgba(212,170,90,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
@@ -471,7 +512,7 @@ export default function KlendMain() {
           </div>
         </div>
 
-        <a href="#works" style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, color: C.muted, textDecoration: "none" }}>
+        <a href="#works" aria-label="Листать к работам" style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, color: C.muted, textDecoration: "none" }}>
           <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.12em" }}>ЛИСТАТЬ</span>
           <ChevronDown size={18} style={{ animation: "pulse 2s ease-in-out infinite" }} />
         </a>
@@ -490,13 +531,14 @@ export default function KlendMain() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(340px, 100%), 1fr))", gap: 24 }}>
               {WORKS.map((w, i) => (
                 <div key={w.id} className="kl-work-card"
                   style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, overflow: "hidden", transition: "border-color 0.3s", animationDelay: `${i * 0.1}s` }}>
                   {/* Image */}
                   <div style={{ position: "relative", height: 220, overflow: "hidden" }}>
-                    <img src={w.img} alt={w.title} className="kl-work-img"
+                    <img src={w.img} alt={`Превью лендинга: ${w.title}`} className="kl-work-img"
+                      loading="lazy" decoding="async"
                       style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", transition: "transform 0.5s cubic-bezier(0.23,1,0.32,1)" }} />
                     <div className="kl-work-overlay"
                       style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.6)", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0, transition: "opacity 0.3s" }}>
@@ -549,7 +591,7 @@ export default function KlendMain() {
               Что мы <em style={{ color: C.gold, fontStyle: "italic" }}>делаем.</em>
             </h2>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 1, background: C.border }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 100%), 1fr))", gap: 1, background: C.border }}>
               {[
                 { n: "01", title: "Лендинг под ключ", desc: "Одностраничный продающий сайт: стратегия, дизайн, тексты, вёрстка." },
                 { n: "02", title: "Сайт-визитка", desc: "Многостраничный сайт для бизнеса, агента или личного бренда." },
@@ -586,7 +628,7 @@ export default function KlendMain() {
               Четыре шага <em style={{ color: C.gold, fontStyle: "italic" }}>до результата.</em>
             </h2>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 32 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(240px, 100%), 1fr))", gap: 32 }}>
               {[
                 { n: "1", title: "Бриф и стратегия", desc: "Изучаем бизнес, аудиторию и конкурентов. Формируем позиционирование." },
                 { n: "2", title: "Дизайн-концепция", desc: "Создаём уникальный визуальный образ: палитра, типографика, ключевые экраны." },
@@ -610,7 +652,7 @@ export default function KlendMain() {
       <section id="form" style={{ padding: "100px clamp(20px,5vw,80px)", background: C.surface }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div ref={formRef} className="kl-fade">
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "start" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: "clamp(40px,6vw,80px)", alignItems: "start" }}>
               {/* Left: info */}
               <div>
                 <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.14em", color: C.gold, marginBottom: 12 }}>ЗАЯВКА</div>
@@ -638,7 +680,7 @@ export default function KlendMain() {
                 </div>
 
                 <div style={{ marginTop: 48, paddingTop: 32, borderTop: `1px solid ${C.border}` }}>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: C.muted }}>Кирилл · Ежедневно с 9:00 до 21:00</p>
+                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: C.muted }}>Отвечаем ежедневно с 9:00 до 21:00</p>
                 </div>
               </div>
 
