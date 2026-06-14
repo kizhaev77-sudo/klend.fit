@@ -10,12 +10,12 @@
 import { useState } from "react";
 
 const PHOTOS = {
-  hero: "/manus-storage/photo1_872cb24e.jpg",
-  fire: "/manus-storage/photo2_036e361c.jpg",
-  chair: "/manus-storage/photo3_0ca741a6.jpg",
-  interior1: "/manus-storage/photo4_27449431.jpg",
-  interior2: "/manus-storage/photo5_583e1e06.jpg",
-  interior3: "/manus-storage/photo6_de035510.jpg",
+  hero: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1600&q=80&auto=format&fit=crop",
+  fire: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=1000&q=80&auto=format&fit=crop",
+  chair: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=900&q=80&auto=format&fit=crop",
+  interior1: "https://images.unsplash.com/photo-1759134198561-e2041049419c?w=900&q=80&auto=format&fit=crop",
+  interior2: "https://images.unsplash.com/photo-1667539916609-c706d5b7ed65?w=900&q=80&auto=format&fit=crop",
+  interior3: "https://images.unsplash.com/photo-1667539916756-9efa8343624f?w=900&q=80&auto=format&fit=crop",
 };
 
 const SERVICES = [
