@@ -11,7 +11,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import {
   ArrowRight, Phone, ChevronDown, CheckCircle2,
-  Upload, X, ChevronLeft, ChevronRight, Send, Loader2
+  Upload, X, ChevronLeft, ChevronRight, Send, Loader2, Mail
 } from "lucide-react";
 
 // ── Palette ──────────────────────────────────────────────────────────────────
@@ -680,6 +680,9 @@ export default function KlendMain() {
                 </div>
 
                 <div style={{ marginTop: 48, paddingTop: 32, borderTop: `1px solid ${C.border}` }}>
+                  <a href="mailto:info@klend.fit" className="kl-nav-link" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 15, textDecoration: "none", marginBottom: 8, transition: "color 0.2s" }}>
+                    <Mail size={15} color={C.gold} /> info@klend.fit
+                  </a>
                   <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: C.muted }}>Отвечаем ежедневно с 9:00 до 21:00</p>
                 </div>
               </div>
@@ -698,6 +701,9 @@ export default function KlendMain() {
         <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 18, color: C.muted }}>
           klend<span style={{ color: C.gold }}>.fit</span>
         </div>
+        <a href="mailto:info@klend.fit" className="kl-nav-link" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: C.muted, fontFamily: "Inter, sans-serif", fontSize: 14, textDecoration: "none", transition: "color 0.2s" }}>
+          <Mail size={14} color={C.gold} /> info@klend.fit
+        </a>
         <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "rgba(136,136,136,0.5)", letterSpacing: "0.04em" }}>
           Студия веб-дизайна · Лендинги и сайты
         </div>
