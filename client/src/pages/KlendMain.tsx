@@ -802,8 +802,6 @@ export default function KlendMain() {
           Студия веб-дизайна · Лендинги и сайты
         </div>
       </footer>
-
-      <CatGuide />
     </div>
   );
 }
