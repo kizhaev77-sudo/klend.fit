@@ -409,6 +409,49 @@ function EmailCopy({ color, fontSize, iconSize }: { color: string; fontSize: num
   );
 }
 
+// ── Кот-гид: плавающий маскот, комментирует разделы ───────────────────────────
+const CAT_LINES: Record<string, string> = {
+  top: "Мяу! Я Кленд-кот 🐾 Листай вниз — покажу, на что мы способны.",
+  works: "Это наши лендинги. Каждый вылизан до блеска — прямо как моя шёрстка.",
+  services: "Услуги? Бери лендинг под ключ — и не мяукай про вёрстку, всё сделаем.",
+  process: "Всего четыре шага до сайта. Я бы и в три уложился, но я кот — мне лень.",
+  form: "Дошёл до заявки? Не тяни кота за хвост — заполняй, я прослежу 🐾",
+};
+
+function CatGuide() {
+  const [msg, setMsg] = useState(CAT_LINES.top);
+  const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    const ids = Object.keys(CAT_LINES);
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && CAT_LINES[e.target.id]) setMsg(CAT_LINES[e.target.id]);
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+    );
+    ids.forEach((id) => { const el = document.getElementById(id); if (el) obs.observe(el); });
+    return () => obs.disconnect();
+  }, []);
+
+  if (!open) return null;
+
+  return (
+    <div style={{ position: "fixed", right: "clamp(12px,3vw,28px)", bottom: "clamp(12px,3vw,28px)", zIndex: 80, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, maxWidth: "min(300px, 78vw)", pointerEvents: "none" }}>
+      <div key={msg} className="kl-cat-bubble" style={{ pointerEvents: "auto", position: "relative", background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "11px 14px", color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 13, lineHeight: 1.5, boxShadow: "0 12px 32px rgba(0,0,0,0.45)" }}>
+        {msg}
+        <button onClick={() => setOpen(false)} aria-label="Закрыть кота"
+          style={{ position: "absolute", top: -9, right: -9, width: 22, height: 22, borderRadius: "50%", background: C.card, border: `1px solid ${C.border}`, color: C.muted, cursor: "pointer", fontSize: 13, lineHeight: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>×</button>
+      </div>
+      <img src="/cat.png" alt="Кленд-кот" className="kl-cat-svg" width={96}
+        onClick={() => setMsg("Мур-мур 🐾 Жми «Оставить заявку» — не пожалеешь!")}
+        style={{ height: "auto", display: "block", pointerEvents: "auto" }} />
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function KlendMain() {
   const heroRef = useFadeUp();
@@ -452,6 +495,18 @@ export default function KlendMain() {
         /* Мобильная навигация: прячем тесные ссылки, оставляем логотип + CTA */
         @media (max-width: 720px) {
           .kl-nav-links { display: none !important; }
+        }
+        /* Кот-гид */
+        @keyframes kl-blink { 0%,92%,100%{transform:scaleY(1)} 96%{transform:scaleY(0.08)} }
+        @keyframes kl-tail { 0%,100%{transform:rotate(0deg)} 50%{transform:rotate(-12deg)} }
+        @keyframes kl-cat-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+        @keyframes kl-cat-in { from{opacity:0; transform:translateY(10px) scale(0.96)} to{opacity:1; transform:none} }
+        .kl-cat-eyes { animation: kl-blink 4.5s infinite; transform-origin: 60px 58px; }
+        .kl-cat-tail { transform-origin: 88px 96px; animation: kl-tail 3.2s ease-in-out infinite; }
+        .kl-cat-svg { animation: kl-cat-bob 3.6s ease-in-out infinite; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.45)); cursor: pointer; }
+        .kl-cat-bubble { animation: kl-cat-in 0.35s cubic-bezier(0.23,1,0.32,1); }
+        @media (prefers-reduced-motion: reduce) {
+          .kl-cat-eyes, .kl-cat-tail, .kl-cat-svg, .kl-cat-bubble { animation: none !important; }
         }
       `}</style>
 
@@ -723,6 +778,8 @@ export default function KlendMain() {
           Студия веб-дизайна · Лендинги и сайты
         </div>
       </footer>
+
+      <CatGuide />
     </div>
   );
 }
