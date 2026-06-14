@@ -421,6 +421,26 @@ const CAT_LINES: Record<string, string> = {
 function CatGuide() {
   const [msg, setMsg] = useState(CAT_LINES.top);
   const [open, setOpen] = useState(true);
+  const [talking, setTalking] = useState(false);
+  const msgRef = useRef(CAT_LINES.top);
+  msgRef.current = msg;
+
+  function speak() {
+    try {
+      const synth = (window as any).speechSynthesis;
+      if (!synth) return;
+      synth.cancel();
+      const clean = msgRef.current.replace(/[^\p{L}\p{N}\s.,!?:—-]/gu, "").trim();
+      const u = new SpeechSynthesisUtterance(clean);
+      u.lang = "ru-RU";
+      const ru = synth.getVoices().find((v: SpeechSynthesisVoice) => (v.lang || "").toLowerCase().startsWith("ru"));
+      if (ru) u.voice = ru;
+      u.rate = 1; u.pitch = 1.1;
+      u.onstart = () => setTalking(true);
+      u.onend = () => setTalking(false);
+      synth.speak(u);
+    } catch (e) { /* TTS недоступен — просто молчим */ }
+  }
 
   useEffect(() => {
     const ids = Object.keys(CAT_LINES);
@@ -442,11 +462,12 @@ function CatGuide() {
     <div style={{ position: "fixed", right: "clamp(12px,3vw,28px)", bottom: "clamp(12px,3vw,28px)", zIndex: 80, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, maxWidth: "min(300px, 78vw)", pointerEvents: "none" }}>
       <div key={msg} className="kl-cat-bubble" style={{ pointerEvents: "auto", position: "relative", background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "11px 14px", color: C.cream, fontFamily: "Inter, sans-serif", fontSize: 13, lineHeight: 1.5, boxShadow: "0 12px 32px rgba(0,0,0,0.45)" }}>
         {msg}
+        <div style={{ marginTop: 6, fontSize: 11, color: C.muted }}>🔊 нажми на кота — заговорит</div>
         <button onClick={() => setOpen(false)} aria-label="Закрыть кота"
           style={{ position: "absolute", top: -9, right: -9, width: 22, height: 22, borderRadius: "50%", background: C.card, border: `1px solid ${C.border}`, color: C.muted, cursor: "pointer", fontSize: 13, lineHeight: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>×</button>
       </div>
-      <img src="/cat.png" alt="Кленд-кот" className="kl-cat-svg" width={96}
-        onClick={() => setMsg("Мур-мур 🐾 Жми «Оставить заявку» — не пожалеешь!")}
+      <img src="/cat.png" alt="Кленд-кот" className={"kl-cat-svg" + (talking ? " kl-cat-talking" : "")} width={96}
+        onClick={speak} title="Нажми — кот заговорит"
         style={{ height: "auto", display: "block", pointerEvents: "auto" }} />
     </div>
   );
@@ -499,11 +520,14 @@ export default function KlendMain() {
         /* Кот-гид */
         @keyframes kl-blink { 0%,92%,100%{transform:scaleY(1)} 96%{transform:scaleY(0.08)} }
         @keyframes kl-tail { 0%,100%{transform:rotate(0deg)} 50%{transform:rotate(-12deg)} }
-        @keyframes kl-cat-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+        @keyframes kl-cat-bob { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-6px) rotate(2deg)} }
+        @keyframes kl-cat-talk { 0%,100%{transform:translateY(0) rotate(0deg)} 25%{transform:translateY(-4px) rotate(-4deg)} 75%{transform:translateY(-4px) rotate(4deg)} }
         @keyframes kl-cat-in { from{opacity:0; transform:translateY(10px) scale(0.96)} to{opacity:1; transform:none} }
         .kl-cat-eyes { animation: kl-blink 4.5s infinite; transform-origin: 60px 58px; }
         .kl-cat-tail { transform-origin: 88px 96px; animation: kl-tail 3.2s ease-in-out infinite; }
-        .kl-cat-svg { animation: kl-cat-bob 3.6s ease-in-out infinite; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.45)); cursor: pointer; }
+        .kl-cat-svg { animation: kl-cat-bob 2.8s ease-in-out infinite; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.45)); cursor: pointer; transition: transform 0.2s; }
+        .kl-cat-svg:hover { transform: scale(1.06); }
+        .kl-cat-talking { animation: kl-cat-talk 0.45s ease-in-out infinite !important; }
         .kl-cat-bubble { animation: kl-cat-in 0.35s cubic-bezier(0.23,1,0.32,1); }
         @media (prefers-reduced-motion: reduce) {
           .kl-cat-eyes, .kl-cat-tail, .kl-cat-svg, .kl-cat-bubble { animation: none !important; }
