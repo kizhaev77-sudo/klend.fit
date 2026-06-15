@@ -590,20 +590,18 @@ export default function KlendMain() {
             </a>
           </div>
 
-          <div style={{ marginTop: 64, display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap" }}>
+          <div style={{ marginTop: 64, display: "flex", alignItems: "center", gap: "clamp(24px,4vw,48px)", flexWrap: "wrap" }}>
             <div>
-              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 36, color: C.cream }}>от 30 000 ₽</div>
-              <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: C.muted, letterSpacing: "0.08em", marginTop: 2 }}>СТОИМОСТЬ РАБОТ</div>
+              <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: C.muted, letterSpacing: "0.1em", marginBottom: 6 }}>СОЗДАНИЕ ЛЕНДИНГА</div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 16, flexWrap: "wrap" }}>
+                <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 30, color: C.muted, textDecoration: "line-through", textDecorationColor: C.gold, textDecorationThickness: "2px" }}>от 30 000 ₽</span>
+                <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(44px,7vw,78px)", fontWeight: 500, color: C.gold, lineHeight: 0.9, letterSpacing: "0.01em" }}>БЕСПЛАТНО</span>
+              </div>
             </div>
-            <div style={{ width: 1, height: 40, background: C.border }} />
+            <div style={{ width: 1, height: 56, background: C.border }} />
             <div>
               <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 36, color: C.cream }}>3–7 дней</div>
               <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: C.muted, letterSpacing: "0.08em", marginTop: 2 }}>СРОК РАЗРАБОТКИ</div>
-            </div>
-            <div style={{ width: 1, height: 40, background: C.border }} />
-            <div>
-              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 36, color: C.cream }}>300 ₽/мес</div>
-              <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: C.muted, letterSpacing: "0.08em", marginTop: 2 }}>ХОСТИНГ</div>
             </div>
           </div>
         </div>
@@ -704,7 +702,7 @@ export default function KlendMain() {
 
             <div style={{ marginTop: 40, padding: "24px 32px", background: C.card, border: `1px solid ${C.border}`, borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
               <p style={{ fontFamily: "Inter, sans-serif", fontSize: 15, color: C.muted }}>
-                Стоимость любого проекта — <strong style={{ color: C.cream }}>от 30 000 ₽.</strong> Точная цена после обсуждения задачи.
+                Создание лендинга под ключ — <span style={{ textDecoration: "line-through", textDecorationColor: C.gold }}>от 30 000 ₽</span> <strong style={{ color: C.gold, fontSize: 18, letterSpacing: "0.02em" }}>бесплатно.</strong> Дизайн, тексты и вёрстка — за наш счёт.
               </p>
               <a href="#form" className="kl-cta"
                 style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.gold, color: "#000", padding: "13px 24px", borderRadius: 3, fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textDecoration: "none", transition: "background 0.2s", whiteSpace: "nowrap" }}>
