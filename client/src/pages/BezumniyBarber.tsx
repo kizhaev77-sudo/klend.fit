@@ -10,12 +10,12 @@
 import { useState } from "react";
 
 const PHOTOS = {
-  hero: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1600&q=80&auto=format&fit=crop",
-  fire: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=1000&q=80&auto=format&fit=crop",
-  chair: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=900&q=80&auto=format&fit=crop",
-  interior1: "https://images.unsplash.com/photo-1759134198561-e2041049419c?w=900&q=80&auto=format&fit=crop",
-  interior2: "https://images.unsplash.com/photo-1667539916609-c706d5b7ed65?w=900&q=80&auto=format&fit=crop",
-  interior3: "https://images.unsplash.com/photo-1667539916756-9efa8343624f?w=900&q=80&auto=format&fit=crop",
+  hero: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=2600&q=85&auto=format&fit=crop",
+  fire: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=1600&q=85&auto=format&fit=crop",
+  chair: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=1400&q=85&auto=format&fit=crop",
+  interior1: "https://images.unsplash.com/photo-1759134198561-e2041049419c?w=1400&q=85&auto=format&fit=crop",
+  interior2: "https://images.unsplash.com/photo-1667539916609-c706d5b7ed65?w=1400&q=85&auto=format&fit=crop",
+  interior3: "https://images.unsplash.com/photo-1667539916756-9efa8343624f?w=1400&q=85&auto=format&fit=crop",
 };
 
 const SERVICES = [

@@ -18,10 +18,10 @@
 import { useState } from "react";
 
 const PHOTOS = {
-  hero: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=1100&q=80&auto=format&fit=crop",       // box of colorful bonbons
-  kartoshka: "https://images.unsplash.com/photo-1613323885373-6e91a09b598b?w=900&q=80&auto=format&fit=crop",  // chocolate dessert
-  mochi: "https://images.unsplash.com/photo-1635355347994-b79177b77e5c?w=900&q=80&auto=format&fit=crop",      // mochi
-  bonbons: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=900&q=80&auto=format&fit=crop",    // colorful bonbons box (reused for about)
+  hero: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=1600&q=85&auto=format&fit=crop",       // box of colorful bonbons
+  kartoshka: "https://images.unsplash.com/photo-1613323885373-6e91a09b598b?w=1400&q=85&auto=format&fit=crop",  // chocolate dessert
+  mochi: "https://images.unsplash.com/photo-1635355347994-b79177b77e5c?w=1400&q=85&auto=format&fit=crop",      // mochi
+  bonbons: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=1400&q=85&auto=format&fit=crop",    // colorful bonbons box (reused for about)
 };
 
 const MENU = [
