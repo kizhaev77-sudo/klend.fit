@@ -59,6 +59,17 @@ const WORKS = [
     img: "data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'680'%20height%3D'440'%20viewBox%3D'0%200%20680%20440'%3E%3Cdefs%3E%3ClinearGradient%20id%3D'g'%20x1%3D'0'%20y1%3D'0'%20x2%3D'1'%20y2%3D'1'%3E%3Cstop%20offset%3D'0'%20stop-color%3D'%230c0c0e'%2F%3E%3Cstop%20offset%3D'1'%20stop-color%3D'%2317181c'%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D'680'%20height%3D'440'%20fill%3D'url(%23g)'%2F%3E%3Cg%20stroke%3D'%23bda773'%20stroke-opacity%3D'0.06'%20stroke-width%3D'1'%3E%3Cline%20x1%3D'60'%20y1%3D'0'%20x2%3D'60'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'120'%20y1%3D'0'%20x2%3D'120'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'180'%20y1%3D'0'%20x2%3D'180'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'240'%20y1%3D'0'%20x2%3D'240'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'300'%20y1%3D'0'%20x2%3D'300'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'360'%20y1%3D'0'%20x2%3D'360'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'420'%20y1%3D'0'%20x2%3D'420'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'480'%20y1%3D'0'%20x2%3D'480'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'540'%20y1%3D'0'%20x2%3D'540'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'600'%20y1%3D'0'%20x2%3D'600'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'660'%20y1%3D'0'%20x2%3D'660'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'60'%20x2%3D'680'%20y2%3D'60'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'120'%20x2%3D'680'%20y2%3D'120'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'180'%20x2%3D'680'%20y2%3D'180'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'240'%20x2%3D'680'%20y2%3D'240'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'300'%20x2%3D'680'%20y2%3D'300'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'360'%20x2%3D'680'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'420'%20x2%3D'680'%20y2%3D'420'%2F%3E%3C%2Fg%3E%3Cellipse%20cx%3D'500'%20cy%3D'210'%20rx%3D'280'%20ry%3D'210'%20fill%3D'%23bda773'%20fill-opacity%3D'0.06'%2F%3E%3Crect%20x%3D'48'%20y%3D'44'%20width%3D'150'%20height%3D'30'%20rx%3D'2'%20fill%3D'none'%20stroke%3D'%23bda773'%20stroke-opacity%3D'0.5'%2F%3E%3Ctext%20x%3D'62'%20y%3D'64'%20font-family%3D'Inter%2CArial%2Csans-serif'%20font-size%3D'13'%20letter-spacing%3D'2.5'%20fill%3D'%23bda773'%3E%D0%91%D0%90%D0%A0%D0%91%D0%95%D0%A0%D0%A8%D0%9E%D0%9F%3C%2Ftext%3E%3Ctext%20x%3D'48'%20y%3D'250'%20font-family%3D'Georgia%2C%26%2339%3BTimes%20New%20Roman%26%2339%3B%2Cserif'%20font-size%3D'50'%20fill%3D'%23eaeaea'%3E%D0%91%D0%B5%D0%B7%D1%83%D0%BC%D0%BD%D1%8B%D0%B9%20%D0%91%D0%B0%D1%80%D0%B1%D0%B5%D1%80%3C%2Ftext%3E%3Cline%20x1%3D'48'%20y1%3D'285'%20x2%3D'130'%20y2%3D'285'%20stroke%3D'%23bda773'%20stroke-width%3D'1.5'%2F%3E%3Ctext%20x%3D'48'%20y%3D'402'%20font-family%3D'Inter%2CArial%2Csans-serif'%20font-size%3D'14'%20letter-spacing%3D'3'%20fill%3D'%239a9a9a'%3Eklend.fit%3C%2Ftext%3E%3C%2Fsvg%3E",
     href: "/barber",
   },
+  {
+    id: "coffee",
+    label: "Кофейня",
+    title: "Кофе и Культура",
+    city: "Саратов",
+    desc: "Лендинг для specialty-кофейни и галереи. Тёплая атмосферная подача, история бренда и процесса, меню.",
+    tags: ["Specialty coffee", "Атмосферный стиль", "Кофейня-галерея"],
+    img: "data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'680'%20height%3D'440'%20viewBox%3D'0%200%20680%20440'%3E%3Cdefs%3E%3ClinearGradient%20id%3D'g'%20x1%3D'0'%20y1%3D'0'%20x2%3D'1'%20y2%3D'1'%3E%3Cstop%20offset%3D'0'%20stop-color%3D'%2317110a'%2F%3E%3Cstop%20offset%3D'1'%20stop-color%3D'%232a1d10'%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D'680'%20height%3D'440'%20fill%3D'url(%23g)'%2F%3E%3Cg%20stroke%3D'%23c79a5a'%20stroke-opacity%3D'0.06'%20stroke-width%3D'1'%3E%3Cline%20x1%3D'60'%20y1%3D'0'%20x2%3D'60'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'120'%20y1%3D'0'%20x2%3D'120'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'180'%20y1%3D'0'%20x2%3D'180'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'240'%20y1%3D'0'%20x2%3D'240'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'300'%20y1%3D'0'%20x2%3D'300'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'360'%20y1%3D'0'%20x2%3D'360'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'420'%20y1%3D'0'%20x2%3D'420'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'480'%20y1%3D'0'%20x2%3D'480'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'540'%20y1%3D'0'%20x2%3D'540'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'600'%20y1%3D'0'%20x2%3D'600'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'660'%20y1%3D'0'%20x2%3D'660'%20y2%3D'440'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'60'%20x2%3D'680'%20y2%3D'60'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'120'%20x2%3D'680'%20y2%3D'120'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'180'%20x2%3D'680'%20y2%3D'180'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'240'%20x2%3D'680'%20y2%3D'240'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'300'%20x2%3D'680'%20y2%3D'300'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'360'%20x2%3D'680'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'0'%20y1%3D'420'%20x2%3D'680'%20y2%3D'420'%2F%3E%3C%2Fg%3E%3Cellipse%20cx%3D'500'%20cy%3D'210'%20rx%3D'280'%20ry%3D'210'%20fill%3D'%23c79a5a'%20fill-opacity%3D'0.07'%2F%3E%3Crect%20x%3D'48'%20y%3D'44'%20width%3D'118'%20height%3D'30'%20rx%3D'2'%20fill%3D'none'%20stroke%3D'%23c79a5a'%20stroke-opacity%3D'0.5'%2F%3E%3Ctext%20x%3D'62'%20y%3D'64'%20font-family%3D'Inter%2CArial%2Csans-serif'%20font-size%3D'13'%20letter-spacing%3D'2.5'%20fill%3D'%23c79a5a'%3E%D0%9A%D0%9E%D0%A4%D0%95%D0%99%D0%9D%D0%AF%3C%2Ftext%3E%3Ctext%20x%3D'48'%20y%3D'250'%20font-family%3D'Georgia%2Cserif'%20font-size%3D'50'%20fill%3D'%23f3e9d8'%3E%D0%9A%D0%BE%D1%84%D0%B5%20%D0%B8%20%D0%9A%D1%83%D0%BB%D1%8C%D1%82%D1%83%D1%80%D0%B0%3C%2Ftext%3E%3Cline%20x1%3D'48'%20y1%3D'285'%20x2%3D'130'%20y2%3D'285'%20stroke%3D'%23c79a5a'%20stroke-width%3D'1.5'%2F%3E%3Ctext%20x%3D'48'%20y%3D'402'%20font-family%3D'Inter%2CArial%2Csans-serif'%20font-size%3D'14'%20letter-spacing%3D'3'%20fill%3D'%239a8b73'%3Eklend.fit%3C%2Ftext%3E%3C%2Fsvg%3E",
+    href: "/coffee/",
+    external: true,
+  },
 ];
 
 // ── Fade-up animation hook ────────────────────────────────────────────────────
@@ -473,6 +484,12 @@ function CatGuide() {
   );
 }
 
+// ── Ссылка на работу: внешний лендинг (новая вкладка) или внутренний роут ──────
+function WorkLink({ href, external, style, children }: { href: string; external?: boolean; style: React.CSSProperties; children: React.ReactNode }) {
+  if (external) return <a href={href} target="_blank" rel="noopener noreferrer" style={style}>{children}</a>;
+  return <Link href={href} style={style}>{children}</Link>;
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function KlendMain() {
   const heroRef = useFadeUp();
@@ -636,10 +653,10 @@ export default function KlendMain() {
                       style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", transition: "transform 0.5s cubic-bezier(0.23,1,0.32,1)" }} />
                     <div className="kl-work-overlay"
                       style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.6)", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0, transition: "opacity 0.3s" }}>
-                      <Link href={w.href}
+                      <WorkLink href={w.href} external={w.external}
                         style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.gold, color: "#000", padding: "12px 24px", borderRadius: 3, fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textDecoration: "none" }}>
                         ОТКРЫТЬ САЙТ <ArrowRight size={14} />
-                      </Link>
+                      </WorkLink>
                     </div>
                     <div style={{ position: "absolute", top: 14, left: 14, background: "rgba(10,10,10,0.8)", border: `1px solid ${C.border}`, borderRadius: 2, padding: "4px 10px", fontFamily: "Inter, sans-serif", fontSize: 11, letterSpacing: "0.1em", color: C.gold }}>
                       {w.label}
@@ -664,10 +681,10 @@ export default function KlendMain() {
                         </span>
                       ))}
                     </div>
-                    <Link href={w.href}
+                    <WorkLink href={w.href} external={w.external}
                       style={{ display: "inline-flex", alignItems: "center", gap: 6, color: C.gold, fontFamily: "Inter, sans-serif", fontSize: 13, letterSpacing: "0.06em", textDecoration: "none" }}>
                       ОТКРЫТЬ САЙТ <ArrowRight size={14} />
-                    </Link>
+                    </WorkLink>
                   </div>
                 </div>
               ))}
