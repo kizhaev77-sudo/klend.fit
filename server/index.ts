@@ -6,8 +6,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TELEGRAM_BOT_TOKEN = "8100524128:AAExNf_6gF3KeydhkiPjB7MzR_gRrMu7TlY";
-const TELEGRAM_CHAT_ID = "192002894";
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
 
 async function startServer() {
   const app = express();
@@ -20,7 +20,7 @@ async function startServer() {
       const d = req.body || {};
 
       const lines = [
-        "🆕 *Новая заявка с klend.space*",
+        "🆕 *Новая заявка с klend.fit*",
         "",
         d.businessType ? `*Бизнес:* ${d.businessType}` : "",
         d.businessDesc ? `*Описание:* ${d.businessDesc}` : "",
@@ -37,6 +37,11 @@ async function startServer() {
       ].filter(Boolean);
 
       const text = lines.join("\n");
+
+      if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+        console.error("Telegram env vars not configured");
+        return res.status(500).json({ ok: false, error: "not_configured" });
+      }
 
       const tgResp = await fetch(
         `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
