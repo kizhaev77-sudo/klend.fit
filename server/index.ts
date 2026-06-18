@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
+const TG_API_BASE = process.env.TG_API_BASE || "https://api.telegram.org";
 
 async function startServer() {
   const app = express();
@@ -44,7 +45,7 @@ async function startServer() {
       }
 
       const tgResp = await fetch(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+        `${TG_API_BASE}/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
