@@ -198,7 +198,7 @@ export default function Home() {
                 fontFamily: "Cormorant Garamond, serif",
                 fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
                 color: "#d4aa5a", fontWeight: 300, lineHeight: 1,
-              }}>59 000 000 ₽</div>
+              }}>58 500 000 ₽</div>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginLeft: "auto" }}>
               <a href={`tel:${PHONE_RAW}`} style={{
