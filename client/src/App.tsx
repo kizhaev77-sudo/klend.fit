@@ -9,13 +9,14 @@ import Home from "@/pages/Home";
 import BezumniyBarber from "@/pages/BezumniyBarber";
 import LenVanil from "@/pages/LenVanil";
 import Remont from "@/pages/Remont";
-
+import DiplomatForma from "@/pages/DiplomatForma";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={KlendMain} />
       <Route path={"/diplomat"} component={Home} />
+      <Route path={"/diplomat-forma"} component={DiplomatForma} />
       <Route path={"/barber"} component={BezumniyBarber} />
       <Route path={"/len-vanil"} component={LenVanil} />
       <Route path={"/remont"} component={Remont} />
@@ -26,18 +27,10 @@ function Router() {
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />
