@@ -259,7 +259,7 @@ const MARKUP = String.raw`<audio id="bg" loop preload="auto"><source src="data:a
   <p class="body" style="margin:18px auto 0;text-align:center">Один взрослый собственник, без обременений. Квартира продаётся с мебелью и техникой. Приглашаем на просмотр.</p>
   <div class="btns">
     <a class="btn fill" href="tel:+79219669188">Позвонить · +7 921 966-91-88</a>
-    <a class="btn" href="https://t.me/kklend_bot" target="_blank" rel="noopener">Запись на закрытый показ</a>
+    <a class="btn" href="https://t.me/kklend_bot?start=show" target="_blank" rel="noopener">Запись на закрытый показ</a>
     <a class="btn" href="https://spb.cian.ru/sale/flat/331122274/" target="_blank">Объявление на ЦИАН</a>
   </div>
   <div class="mono" style="margin-top:30px">Олеся Фивейская · риелтор · Мир Квартир Элит</div>
