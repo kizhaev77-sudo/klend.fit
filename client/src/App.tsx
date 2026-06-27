@@ -8,7 +8,6 @@ import KlendMain from "@/pages/KlendMain";
 import Home from "@/pages/Home";
 import BezumniyBarber from "@/pages/BezumniyBarber";
 import LenVanil from "@/pages/LenVanil";
-import Remont from "@/pages/Remont";
 import DiplomatForma from "@/pages/DiplomatForma";
 
 function Router() {
@@ -19,7 +18,6 @@ function Router() {
       <Route path={"/diplomat-forma"} component={DiplomatForma} />
       <Route path={"/barber"} component={BezumniyBarber} />
       <Route path={"/len-vanil"} component={LenVanil} />
-      <Route path={"/remont"} component={Remont} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
