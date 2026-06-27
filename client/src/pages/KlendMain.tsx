@@ -236,7 +236,13 @@ function IntakeForm() {
     setSending(true);
     setSubmitError(false);
     try {
-      window.open("https://t.me/kklend_bot?start=site", "_blank");
+      const { files, ...payload } = data;
+      const resp = await fetch("https://formsubmit.co/ajax/kizhaev77@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ _subject: "Новая заявка с сайта klend.fit", _template: "table", _captcha: "false", ...payload }),
+      });
+      if (!resp.ok) throw new Error("Request failed");
       setSubmitted(true);
     } catch (e) {
       console.error("Lead submit failed:", e);
