@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.klend.fit/sitemap.xml
+Sitemap: https://klend.fit/sitemap.xml
